@@ -1,0 +1,20 @@
+server:
+  port: 7020
+
+spring:
+  application:
+    name: chicken-boss-user
+
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://zhahao:111111@eureka1:7000/eureka,http://zhahao:111111@eureka2:7001/eureka,http://zhahao:111111@eureka3:7002/eureka
+  instance:
+    instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
+    prefer-ip-address: true

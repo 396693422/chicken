@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: chicken-eureka
+  security:
+    user:
+      name: zhahao
+      password: 111111
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+eureka:
+  server:  #配置属性，但由于 Eureka 自我保护模式以及心跳周期长的原因，经常会遇到 Eureka Server 不剔除已关停的节点的问题
+    enable-self-preservation: false
+    # 清理无效节点的时间间隔，默认60000毫秒
+    eviction-interval-timer-in-ms: 5000
+  client:
+      # 是否从eureka上获取注册信息
+      fetch-registry: false
+      # 表示是否注册自身到eureka服务器
+      register-with-eureka: false
+      serviceUrl:
+        defaultZone: http://zhahao:111111@eureka2:7001/eureka/,http://zhahao:111111@eureka3:7002/eureka/,http://zhahao:111111@eureka1:7000/eureka/
+
+---
+spring:
+  profiles: eureka1
+
+server:
+  port: 7000
+#  servlet:
+#    context-path: /discovery
+
+eureka:
+  instance:
+    hostname: eureka1
+
+---
+spring:
+  profiles: eureka2
+
+server:
+  port: 7001
+#  servlet:
+#    context-path: /discovery
+
+eureka:
+  instance:
+    hostname: eureka2
+
+---
+spring:
+  profiles: eureka3
+
+server:
+  port: 7002
+#  servlet:
+#    context-path: /discovery
+
+eureka:
+  instance:
+    hostname: eureka3

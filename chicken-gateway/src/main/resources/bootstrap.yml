@@ -1,0 +1,31 @@
+server:
+  port: 7010
+spring:
+  application:
+    name: chicken-gateway
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://zhahao:111111@eureka2:7001/eureka/,http://zhahao:111111@eureka3:7002/eureka/,http://zhahao:111111@eureka1:7000/eureka/
+  instance:
+    instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
+    prefer-ip-address: true
+
+zuul:
+  routes:
+    user-route:
+      path: /cbu/**
+      service-id: chicken-boss-user
+  #关闭默认路由配置
+  ignored-services: '*'

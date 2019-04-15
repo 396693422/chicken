@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+  <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+  <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+
+  <property name="LOG.DIRECTORY" value="./logs/" />
+  <property name="LOG.CONTEXT.NAME" value="${springAppName}" />
+  <property name="LOG.MAXHISTORY" value="30" /><!--  保留30天日志 -->
+  <property name="LOG_FILE" value="${LOG.DIRECTORY}${LOG.CONTEXT.NAME}"/>
+  <property name="CONSOLE_LOG_PATTERN"
+            value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr([${springAppName:-},%X{customTraceId:-}]){yellow} %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+
+  <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+      <charset>utf8</charset>
+    </encoder>
+  </appender>
+
+  <appender name="flatfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_FILE}.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_FILE}-log.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <maxHistory>${LOG.MAXHISTORY}</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+      <charset>utf8</charset>
+    </encoder>
+  </appender>
+
+  <appender name="errorflatfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_FILE}.error.log</file>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>WARN</level>
+    </filter>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_FILE}-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <maxHistory>${LOG.MAXHISTORY}</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+      <charset>utf8</charset>
+    </encoder>
+  </appender>
+
+  <appender name="daoFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_FILE}-sql.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <maxHistory>${LOG.MAXHISTORY}</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36}-%msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="com.saas.jplogiccloud.dao" level="DEBUG">
+    <appender-ref ref="daoFileAppender" />
+  </logger>
+
+  <root level="INFO">
+    <appender-ref ref="console"/>
+    <appender-ref ref="flatfile"/>
+    <appender-ref ref="errorflatfile"/>
+  </root>
+</configuration>
